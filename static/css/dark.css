@@ -1,0 +1,48 @@
+body {
+    background: #111;
+    color: #f4f4f4;
+}
+
+.nav-tabs .nav-link {
+    background: #212529;
+    color: #787878;
+    border: 1px solid #dee2e6;
+}
+
+.nav-tabs .nav-item.show .nav-link,
+.nav-tabs .nav-link.active {
+    color: inherit;
+    background-color: #444;
+    border-color: #dee2e6 #dee2e6 #111;
+}
+
+.btn {
+    color: inherit;
+    background-color: #212529;
+    border-color: #212529;
+}
+
+.btn:hover {
+    color: inherit;
+}
+
+.btn:focus {
+    box-shadow: 0 0 0 0;
+}
+
+.btn:active:focus,
+.btn.active:focus,
+.show>.btn.dropdown-toggle:focus {
+    box-shadow: 0 0 0 0.25rem rgba(66, 70, 73, 0.5);
+}
+
+.modal-content
+{
+    background-color: #000;
+    border: 1px solid rgba(255, 255, 255, .2);
+}
+
+.btn-close {
+    color: #fff;
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
