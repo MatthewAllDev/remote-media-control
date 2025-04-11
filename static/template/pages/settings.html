@@ -1,0 +1,29 @@
+{{define "settings_page_tab"}}
+<button class="nav-link" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings" type="button" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</button> 
+{{end}} 
+{{define "settings_page"}}
+<div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
+    <div class="row row-grid-12">
+        <div class="col-12">
+            <div class="row row-grid-2">
+                <div class="center-y-container">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="DarkModeSwitch">
+                        <label class="form-check-label" for="DarkModeSwitch">Dark mode</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-grid-2">
+                <div class="center-y-container">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="FullScreenSwitch">
+                        <label class="form-check-label" for="FullScreenSwitch">Full screen</label>
+                    </div>
+                </div>
+            </div>
+            {{template "media_page_visibility_switch"}}
+            {{template "vlc_page_visibility_switch"}}
+        </div>
+    </div>
+</div>
+{{end}}

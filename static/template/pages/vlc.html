@@ -1,0 +1,101 @@
+{{define "vlc_page_tab"}}
+<button class="nav-link" id="nav-vlc-tab" data-bs-toggle="tab" data-bs-target="#nav-vlc" type="button" role="tab" aria-controls="nav-vlc" aria-selected="false">VLC</button> 
+{{end}} 
+
+{{define "vlc_page"}}
+<div class="tab-pane fade" id="nav-vlc" role="tabpanel" aria-labelledby="nav-vlc-tab">
+    <div class="row row-grid-2">
+        <div class="col-8">
+            <div class="row row-small row-grid-12">
+                <div class="col-3">
+                    <div class="center-container">
+                        <button type="button" class="btn click-button btn-small btn-right" data-sent-key="VK_ESC"><i class="bi bi-fullscreen-exit"></i></button>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="center-container">
+                        <button type="button" class="btn click-button btn-small btn-right" data-sent-key="VK_F"><i class="bi bi-fullscreen"></i></button>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="center-container">
+                        <button type="button" class="btn click-button btn-small btn-left" data-sent-key="VK_V"><i class="bi bi-badge-cc"></i></button>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="center-container">
+                        <button type="button" class="btn click-button btn-small btn-left" data-sent-key="VK_B"><i class="bi bi-soundwave"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="center-container">
+                <button type="button" class="btn click-button btn-medium btn-center" data-sent-key="VK_M"><i class="bi bi-volume-mute"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="row row-grid-5">
+        <div class="col-8">
+            <div class="row row-grid-6">
+                <div class="center-container">
+                    <button type="button" class="btn click-button btn-center" data-sent-key="VK_S"><i class="bi bi-stop"></i></button>
+                </div>
+            </div>
+            <div class="row row-small row-grid-6">
+                <div class="col-6">
+                    <div class="center-container"><button type="button" class="btn click-button btn-right" data-sent-key="VK_P"><i
+                            class="bi bi-skip-backward"></i></button></div>
+                </div>
+                <div class="col-6">
+                    <div class="center-container"><button type="button" class="btn click-button btn-left" data-sent-key="VK_N"><i
+                            class="bi bi-skip-forward"></i></button></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="center-container">
+                <button type="button" class="btn push-button btn-center" data-sent-key="VK_UP"><i
+                    class="bi bi-volume-up"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="row row-grid-5">
+        <div class="col-8">
+            <div class="row row-small row-grid-6">
+                <div class="col-6">
+                    <div class="center-container"><button type="button" class="btn push-button btn-right" data-sent-key="VK_LEFT"><i
+                            class="bi bi-chevron-double-left"></i></button></div>
+                </div>
+                <div class="col-6">
+                    <div class="center-container"><button type="button" class="btn push-button btn-left" data-sent-key="VK_RIGHT"><i
+                            class="bi bi-chevron-double-right"></i></button></div>
+                </div>
+            </div>
+            <div class="row row-grid-6">
+                <div class="center-container">
+                    <button type="button" class="btn click-button btn-center" data-sent-key="VK_SPACE"><i class="bi bi-play"></i><i
+                        class="bi bi-pause"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="center-container">
+                <button type="button" class="btn push-button btn-center" data-sent-key="VK_DOWN"><i class="bi bi-volume-down"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{end}}
+
+{{define "vlc_page_visibility_switch"}}
+<div class="row row-grid-2">
+    <div class="center-y-container">
+        <div class="form-check form-switch">
+            <input class="form-check-input page-visibility-switch" type="checkbox" role="switch" id="nav-vlc-page-visibility-switch" data-page-id="nav-vlc" checked>
+            <label class="form-check-label" for="nav-vlc-page-visibility-switch">VLC page</label>
+        </div>
+    </div>
+</div>
+{{end}}

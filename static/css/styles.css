@@ -1,0 +1,147 @@
+html {
+    font-size: min(3.8vh, 4.5vw);
+}
+
+label {
+    font-size: 1.5rem;
+    padding-left: 1rem;
+}
+
+.btn {
+    width: 100%;
+    height: 95%;
+    font-size: 2.5rem;
+    touch-action: none;
+}
+
+.btn-medium {
+    font-size: 1.8rem;
+}
+
+.btn-small {
+    font-size: 1.2rem;
+}
+
+.btn-center {
+    margin: auto;
+}
+
+.btn-right {
+    margin: auto 0 auto auto;
+}
+
+.btn-left {
+    margin: auto auto auto 0;
+}
+
+.center-x-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.center-y-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+.center-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.form-switch .form-check-input {
+    width: 4em;
+    height: 2em;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+    padding-top: .5vh;
+}
+
+.row-grid-1 {
+    height: 8.33333333%;
+}
+
+.row-grid-2 {
+    height: 16.66666667%;
+}
+
+.row-grid-3 {
+    height: 25%;
+}
+
+.row-grid-4 {
+    height: 33.33333333%;
+}
+
+.row-grid-5 {
+    height: 41.66666667%;
+}
+
+.row-grid-6 {
+    height: 50%;
+}
+
+.row-grid-7 {
+    height: 58.33333333%;
+}
+
+.row-grid-8 {
+    height: 66.66666667%;
+}
+
+.row-grid-9 {
+    height: 75%;
+}
+
+.row-grid-10 {
+    height: 83.33333333%;
+}
+
+.row-grid-11 {
+    height: 91.66666667%;
+}
+
+.row-grid-12 {
+    height: 100%;
+}
+
+.row-small>*:first-child {
+    padding-right: calc(var(--bs-gutter-x) * .1);
+    padding-left: calc(var(--bs-gutter-x) * .5);
+}
+
+.row-small>* {
+    padding-right: calc(var(--bs-gutter-x) * .1);
+    padding-left: calc(var(--bs-gutter-x) * .1);
+}
+
+.row-small>*:last-child {
+    padding-right: calc(var(--bs-gutter-x) * .5);
+    padding-left: calc(var(--bs-gutter-x) * .1);
+}
+
+.tab-content {
+    flex-grow: 3;
+    padding: 1vh 2vw;
+}
+
+.tab-content>.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.tab-pane {
+    height: 100%;
+}
