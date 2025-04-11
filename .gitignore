@@ -11,6 +11,9 @@ RemoteMediaControl
 *.zip
 *.tar.gz
 
+# Release binaries
+release/
+
 # IntelliJ IDEA
 .idea/
 
