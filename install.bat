@@ -31,7 +31,7 @@ set "START_MENU_FOLDER=%ProgramData%\Microsoft\Windows\Start Menu\Programs\%APP_
 
 mkdir "%install_dir%"
 copy /Y "%~dp0RemoteMediaControl.exe" "%install_dir%"
-xcopy /E /I /Y "%~dp0static" "%install_dir%"
+xcopy /E /I /Y "%~dp0static" "%install_dir%/static"
 copy /Y "%~dp0uninstall.bat" "%install_dir%"
 
 if not exist "%START_MENU_FOLDER%" mkdir "%START_MENU_FOLDER%"
