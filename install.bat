@@ -36,7 +36,7 @@ copy /Y "%~dp0uninstall.bat" "%install_dir%"
 
 if not exist "%START_MENU_FOLDER%" mkdir "%START_MENU_FOLDER%"
 powershell -command "$WshShell = New-Object -ComObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut('%START_MENU_FOLDER%\%APP_NAME%.lnk'); $Shortcut.TargetPath = '%EXE_PATH%'; $Shortcut.WorkingDirectory = '%install_dir%'; $Shortcut.IconLocation = '%EXE_PATH%,0'; $Shortcut.Save()"
-powershell -command "$WshShell = New-Object -ComObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut('%START_MENU_FOLDER%\Uninstall %APP_NAME%.lnk'); $Shortcut.TargetPath = '%~dp0uninstall.bat'; $Shortcut.WorkingDirectory = '%~dp0'; $Shortcut.IconLocation = '%SystemRoot%\System32\shell32.dll,31'; $Shortcut.Save()"
+powershell -command "$WshShell = New-Object -ComObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut('%START_MENU_FOLDER%\Uninstall %APP_NAME%.lnk'); $Shortcut.TargetPath = '%install_dir%\uninstall.bat'; $Shortcut.WorkingDirectory = '%install_dir%'; $Shortcut.IconLocation = '%SystemRoot%\System32\shell32.dll,31'; $Shortcut.Save()"
 
 set /p AUTO_START="Would you like to add RemoteMediaControl to startup? (y/n): "
 IF /I "%AUTO_START%"=="y" (
