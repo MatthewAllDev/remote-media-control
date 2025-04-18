@@ -1,16 +1,17 @@
 #!/bin/bash
 
-if [ "$(id -u)" -ne 0 ]; then
-  echo "This script must be run as root."
-  exit 1
-fi
-
 install_dir="/opt/RemoteMediaControl"
 service_name="remote_media_control.service"
 
-case "$1" in
-  install)
-    if [ ! -f "./RemoteMediaControl" ]; then
+check_root() {
+  if [ "$(id -u)" -ne 0 ]; then
+    echo "This script must be run as root."
+    exit 1
+  fi
+}
+
+install() {
+      if [ ! -f "./RemoteMediaControl" ]; then
       echo "Error: Binary file not found."
       exit 1
     fi
@@ -24,6 +25,7 @@ case "$1" in
 
     mkdir -p "$install_dir"
     cp ./RemoteMediaControl "$install_dir/"
+    cp ./app.ico "$install_dir/"
     cp -r ./static "$install_dir/"
 
     echo "$install_dir" >> /etc/environment
@@ -51,6 +53,30 @@ EOF
       systemctl enable "$service_name"
       systemctl start "$service_name"
       echo "Service installed and started."
+    else
+      desktop_file="/usr/share/applications/remote-media-control.desktop"
+      icon_path="$install_dir/app.png"
+      if [[ "$install_dir/app.ico" == *.ico ]]; then
+        if command -v convert &> /dev/null; then
+          convert "$install_dir/app.ico[0]" "$icon_path"
+        else
+          echo "ImageMagick (convert) not found. Skipping icon conversion."
+          icon_path="$install_dir/app.ico"
+        fi
+      fi
+      cat > "$desktop_file" << EOF
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Remote Media Control
+Exec=bash -c "sudo $install_dir/RemoteMediaControl"
+Icon=$icon_path
+Terminal=true
+StartupNotify=true
+StartupWMClass=RemoteMediaControl
+Categories=Utility;AudioVideo;Network;
+EOF
+      echo "Application shortcut added to system menu."
     fi
 
     if command -v ufw &> /dev/null; then
@@ -68,10 +94,10 @@ EOF
     fi
 
     echo "Installation completed successfully."
-    ;;
-  
-  uninstall)
-    echo "Stopping and disabling service if installed..."
+}
+
+uninstall() {
+  echo "Stopping and disabling service if installed..."
     systemctl stop "$service_name" 2>/dev/null || true
     systemctl disable "$service_name" 2>/dev/null || true
     rm -f "/etc/systemd/system/$service_name"
@@ -99,11 +125,24 @@ EOF
       echo "Firewall tool not found, unable to remove port 80."
     fi
 
+    echo "Removing application shortcut..."
+    rm -f /usr/share/applications/remote-media-control.desktop
+
     echo "Uninstallation completed."
+  
+}
+
+check_root
+
+case "$1" in
+  install)
+  install
     ;;
   
+  uninstall)
+  uninstall
+    ;;  
   *)
     echo "Usage: $0 {install|uninstall}"
     exit 1
-    ;;
 esac

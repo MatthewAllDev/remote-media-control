@@ -38,7 +38,11 @@ if not exist "%START_MENU_FOLDER%" mkdir "%START_MENU_FOLDER%"
 powershell -command "$WshShell = New-Object -ComObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut('%START_MENU_FOLDER%\%APP_NAME%.lnk'); $Shortcut.TargetPath = '%EXE_PATH%'; $Shortcut.WorkingDirectory = '%install_dir%'; $Shortcut.IconLocation = '%EXE_PATH%,0'; $Shortcut.Save()"
 powershell -command "$WshShell = New-Object -ComObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut('%START_MENU_FOLDER%\Uninstall %APP_NAME%.lnk'); $Shortcut.TargetPath = '%~dp0uninstall.bat'; $Shortcut.WorkingDirectory = '%~dp0'; $Shortcut.IconLocation = '%SystemRoot%\System32\shell32.dll,31'; $Shortcut.Save()"
 
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "RemoteMediaControl" /t REG_SZ /d "%install_dir%\RemoteMediaControl.exe --static-path %install_dir%\static" /f
+set /p AUTO_START="Would you like to add RemoteMediaControl to startup? (y/n): "
+IF /I "%AUTO_START%"=="y" (
+    reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "RemoteMediaControl" /t REG_SZ /d "%install_dir%\RemoteMediaControl.exe --static-path %install_dir%\static" /f
+    echo Application added to startup.
+)
 
 powershell -Command "New-NetFirewallRule -DisplayName 'RemoteMediaControl_Firewall_Rule' -Direction Inbound -Protocol TCP -LocalPort 80 -Action Allow -Profile Any"
 echo Port 80 opened in Windows Firewall.
