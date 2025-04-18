@@ -40,7 +40,7 @@ powershell -command "$WshShell = New-Object -ComObject WScript.Shell; $Shortcut 
 
 set /p AUTO_START="Would you like to add RemoteMediaControl to startup? (y/n): "
 IF /I "%AUTO_START%"=="y" (
-    reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "RemoteMediaControl" /t REG_SZ /d "%install_dir%\RemoteMediaControl.exe --static-path %install_dir%\static" /f
+    reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "RemoteMediaControl" /t REG_SZ /d "\"%install_dir%\RemoteMediaControl.exe\" --static-path \"%install_dir%\static\"" /f
     echo Application added to startup.
 )
 
