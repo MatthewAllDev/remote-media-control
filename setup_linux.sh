@@ -61,7 +61,7 @@ EOF
 Version=1.0
 Type=Application
 Name=Remote Media Control
-Exec=bash -c "sudo $install_dir/RemoteMediaControl"
+Exec=bash -c "sudo $install_dir/RemoteMediaControl --static-path $install_dir/static"
 Icon=$icon_path
 Terminal=true
 StartupNotify=true
