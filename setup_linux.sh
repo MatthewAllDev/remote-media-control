@@ -2,6 +2,7 @@
 
 install_dir="/opt/RemoteMediaControl"
 service_name="remote_media_control.service"
+icon_path="$install_dir/app.svg"
 
 check_root() {
   if [ "$(id -u)" -ne 0 ]; then
@@ -25,7 +26,7 @@ install() {
 
     mkdir -p "$install_dir"
     cp ./RemoteMediaControl "$install_dir/"
-    cp ./app.ico "$install_dir/"
+    cp ./app.svg "$icon_path"
     cp -r ./static "$install_dir/"
 
     echo "$install_dir" >> /etc/environment
@@ -55,15 +56,6 @@ EOF
       echo "Service installed and started."
     else
       desktop_file="/usr/share/applications/remote-media-control.desktop"
-      icon_path="$install_dir/app.png"
-      if [[ "$install_dir/app.ico" == *.ico ]]; then
-        if command -v convert &> /dev/null; then
-          convert "$install_dir/app.ico[0]" "$icon_path"
-        else
-          echo "ImageMagick (convert) not found. Skipping icon conversion."
-          icon_path="$install_dir/app.ico"
-        fi
-      fi
       cat > "$desktop_file" << EOF
 [Desktop Entry]
 Version=1.0
