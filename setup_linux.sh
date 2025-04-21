@@ -1,6 +1,10 @@
 #!/bin/bash
 
 install_dir="/opt/RemoteMediaControl"
+binary_name="RemoteMediaControl"
+entrypoint_script="$install_dir/start.sh"
+bin_link_remotemediacontrol="/usr/local/bin/remotemediacontrol"
+bin_link_rmc="/usr/local/bin/rmc"
 service_name="remote_media_control.service"
 icon_path="$install_dir/app.svg"
 
@@ -11,35 +15,77 @@ check_root() {
   fi
 }
 
-install() {
-      if [ ! -f "./RemoteMediaControl" ]; then
-      echo "Error: Binary file not found."
-      exit 1
+copy_files() {
+  if [ ! -f "./RemoteMediaControl" ]; then
+    echo "Error: Binary file not found."
+    exit 1
+  fi
+  if [ ! -d "./static" ]; then
+    echo "Error: 'static' directory not found."
+    exit 1
+  fi
+  mkdir -p "$install_dir"
+  cp ./RemoteMediaControl "$install_dir/$binary_name"
+  cp ./app.svg "$icon_path"
+  cp -r ./static "$install_dir/"
+  cp ./setup.sh "$install_dir/"
+}
+
+create_symbolic_links() {
+  if [ ! -L "$bin_link_remotemediacontrol" ]; then
+    ln -s "$entrypoint_script" "$bin_link_remotemediacontrol"
+    echo "Symbolic link 'remotemediacontrol' created in /usr/local/bin."
+  else
+    if [ "$(readlink -f "$bin_link_remotemediacontrol")" != "$entrypoint_script" ]; then
+        echo "Error: symbolic link 'remotemediacontrol' exists but does not point to the correct binary."
     fi
-
-    if [ ! -d "./static" ]; then
-      echo "Error: 'static' directory not found."
-      exit 1
+  fi
+  if [ ! -L "$bin_link_rmc" ]; then
+    ln -s "$entrypoint_script" "$bin_link_rmc"
+    echo "Symbolic link 'rmc' created in /usr/local/bin."
+  else
+    if [ "$(readlink -f "$bin_link_rmc")" != "$entrypoint_script" ]; then
+        echo "Error: symbolic link 'rmc' exists but does not point to the correct binary."
     fi
+  fi
+}
 
-    read -p "Would you like to install the application as a service with auto-start? (y/n): " install_service
+remove_symbolic_links() {
+  echo "Removing symbolic links..."
+  if [ -L "$bin_link_remotemediacontrol" ] && [ "$(readlink -f "$bin_link_remotemediacontrol")" == "$entrypoint_script" ]; then
+    rm "$bin_link_remotemediacontrol"
+  fi
 
-    mkdir -p "$install_dir"
-    cp ./RemoteMediaControl "$install_dir/"
-    cp ./app.svg "$icon_path"
-    cp -r ./static "$install_dir/"
+  if [ -L "$bin_link_rmc" ] && [ "$(readlink -f "$bin_link_rmc")" == "$entrypoint_script" ]; then
+    rm "$bin_link_rmc"
+  fi
+}
 
-    echo "$install_dir" >> /etc/environment
-    echo "Added $install_dir to system-wide PATH."
+create_start_script() {
+  cat > "$install_dir/start.sh" <<EOL
+#!/bin/bash
 
-    if [ "$install_service" == "y" ]; then
-      cat > /etc/systemd/system/$service_name << EOF
+if [ "\$1" == "uninstall" ]; then
+  echo "Superuser privileges are required to uninstall RemoteMediaControl"
+  sudo "$install_dir/setup.sh" uninstall
+  exit \$?
+fi
+
+echo "Superuser privileges are required to start RemoteMediaControl"
+sudo "$install_dir/RemoteMediaControl" --static-path "$install_dir/static" "\$@"
+EOL
+  chmod +x "$install_dir/start.sh"
+  echo "Start script created at $install_dir/start.sh"
+}
+
+install_service() {
+  cat > /etc/systemd/system/$service_name << EOF
 [Unit]
 Description=Remote Media Control Application
 After=network.target
 
 [Service]
-ExecStart=$install_dir/RemoteMediaControl
+ExecStart=$install_dir/$binary_name
 WorkingDirectory=$install_dir
 Restart=always
 User=root
@@ -49,43 +95,75 @@ Environment=PATH=/usr/bin:/usr/local/bin
 [Install]
 WantedBy=multi-user.target
 EOF
+  systemctl daemon-reload
+  systemctl enable "$service_name"
+  systemctl start "$service_name"
+  echo "Service installed and started."
+}
 
-      systemctl daemon-reload
-      systemctl enable "$service_name"
-      systemctl start "$service_name"
-      echo "Service installed and started."
-    else
-      desktop_file="/usr/share/applications/remote-media-control.desktop"
-      cat > "$desktop_file" << EOF
+create_desktop_file() {
+  desktop_file="/usr/share/applications/remote-media-control.desktop"
+  cat > "$desktop_file" << EOF
 [Desktop Entry]
 Version=1.0
 Type=Application
 Name=Remote Media Control
-Exec=bash -c "sudo $install_dir/RemoteMediaControl --static-path $install_dir/static"
+Exec=bash -c "$entrypoint_script"
 Icon=$icon_path
 Terminal=true
 StartupNotify=true
 StartupWMClass=RemoteMediaControl
 Categories=Utility;AudioVideo;Network;
 EOF
-      echo "Application shortcut added to system menu."
-    fi
+  echo "Application shortcut added to system menu."
+}
 
-    if command -v ufw &> /dev/null; then
-      ufw allow 80/tcp
-      echo "Port 80 opened in UFW firewall."
-    elif command -v firewall-cmd &> /dev/null; then
-      firewall-cmd --zone=public --add-port=80/tcp --permanent
-      firewall-cmd --reload
-      echo "Port 80 opened in firewalld."
-    elif command -v iptables &> /dev/null; then
-      iptables -A INPUT -p tcp --dport 80 -j ACCEPT
-      echo "Port 80 opened in iptables."
-    else
-      echo "Firewall tool not found, unable to open port 80."
-    fi
+add_firewall_rules() {
+  if command -v ufw &> /dev/null; then
+    ufw allow 80/tcp
+    echo "Port 80 opened in UFW firewall."
+  elif command -v firewall-cmd &> /dev/null; then
+    firewall-cmd --zone=public --add-port=80/tcp --permanent
+    firewall-cmd --reload
+    echo "Port 80 opened in firewalld."
+  elif command -v iptables &> /dev/null; then
+    iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+    echo "Port 80 opened in iptables."
+  else
+    echo "Firewall tool not found, unable to open port 80."
+  fi
+}
 
-    echo "Installation completed successfully."
+remove_firewall_rules() {
+  echo "Removing firewall rules..."
+  if command -v ufw &> /dev/null; then
+    ufw delete allow 80/tcp
+    echo "Port 80 removed from UFW firewall."
+  elif command -v firewall-cmd &> /dev/null; then
+    firewall-cmd --zone=public --remove-port=80/tcp --permanent
+    firewall-cmd --reload
+    echo "Port 80 removed from firewalld."
+  elif command -v iptables &> /dev/null; then
+    iptables -D INPUT -p tcp --dport 80 -j ACCEPT
+    echo "Port 80 removed from iptables."
+  else
+    echo "Firewall tool not found, unable to remove port 80."
+  fi
+}
+
+install() {
+  copy_files
+  create_start_script
+  read -p "Would you like to install the application as a service with auto-start? (y/n): " install_service
+  create_symbolic_links
+
+  if [ "$install_service" == "y" ]; then
+    install_service
+  else
+    create_desktop_file
+  fi
+  add_firewall_rules
+  echo "Installation completed successfully."
 }
 
 uninstall() {
@@ -95,27 +173,12 @@ uninstall() {
     rm -f "/etc/systemd/system/$service_name"
     systemctl daemon-reload
 
-    echo "Removing $install_dir from system-wide PATH."
-    sed -i "/$install_dir/d" /etc/environment
-
     echo "Removing application files..."
     rm -rf "$install_dir"
 
-    echo "Removing firewall rules..."
+    remove_firewall_rules
 
-    if command -v ufw &> /dev/null; then
-      ufw delete allow 80/tcp
-      echo "Port 80 removed from UFW firewall."
-    elif command -v firewall-cmd &> /dev/null; then
-      firewall-cmd --zone=public --remove-port=80/tcp --permanent
-      firewall-cmd --reload
-      echo "Port 80 removed from firewalld."
-    elif command -v iptables &> /dev/null; then
-      iptables -D INPUT -p tcp --dport 80 -j ACCEPT
-      echo "Port 80 removed from iptables."
-    else
-      echo "Firewall tool not found, unable to remove port 80."
-    fi
+    remove_symbolic_links
 
     echo "Removing application shortcut..."
     rm -f /usr/share/applications/remote-media-control.desktop
