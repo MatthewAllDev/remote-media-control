@@ -29,6 +29,7 @@ copy_files() {
   cp ./app.svg "$icon_path"
   cp -r ./static "$install_dir/"
   cp ./setup.sh "$install_dir/"
+  cp ./start.sh "$install_dir/"
 }
 
 create_symbolic_links() {
@@ -59,23 +60,6 @@ remove_symbolic_links() {
   if [ -L "$bin_link_rmc" ] && [ "$(readlink -f "$bin_link_rmc")" == "$entrypoint_script" ]; then
     rm "$bin_link_rmc"
   fi
-}
-
-create_start_script() {
-  cat > "$install_dir/start.sh" <<EOL
-#!/bin/bash
-
-if [ "\$1" == "uninstall" ]; then
-  echo "Superuser privileges are required to uninstall RemoteMediaControl"
-  sudo "$install_dir/setup.sh" uninstall
-  exit \$?
-fi
-
-echo "Superuser privileges are required to start RemoteMediaControl"
-sudo "$install_dir/RemoteMediaControl" --static-path "$install_dir/static" "\$@"
-EOL
-  chmod +x "$install_dir/start.sh"
-  echo "Start script created at $install_dir/start.sh"
 }
 
 install_service() {
@@ -157,7 +141,6 @@ remove_firewall_rules() {
 
 install() {
   copy_files
-  create_start_script
   read -p "Would you like to install the application as a service with auto-start? (y/n): " install_service
   create_symbolic_links
 
