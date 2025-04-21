@@ -79,6 +79,10 @@ EOL
 }
 
 install_service() {
+  if [ ! -f "$install_dir/RemoteMediaControl" ]; then
+    echo "Error: Binary file not found in $install_dir."
+    exit 1
+  fi
   cat > /etc/systemd/system/$service_name << EOF
 [Unit]
 Description=Remote Media Control Application
@@ -196,8 +200,11 @@ case "$1" in
   
   uninstall)
   uninstall
+    ;;
+  install-service)
+  install_service
     ;;  
   *)
-    echo "Usage: $0 {install|uninstall}"
+    echo "Usage: $0 {install|uninstall|install-service}"
     exit 1
 esac
