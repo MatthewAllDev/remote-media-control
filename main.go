@@ -5,12 +5,13 @@ import (
 	"RemoteMediaControl/internal/utils"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
 )
 
-const version = "v1.0"
+const version = "v0.1"
 
 func main() {
 	debug := flag.Bool("debug", false, "Enable debug mode")
@@ -32,7 +33,11 @@ func main() {
 		fmt.Println("Or: https://gitverse.ru/MatthewAllDev/remote-media-control")
 		os.Exit(0)
 	}
-	log.SetOutput(os.Stdout)
+	if *debug {
+		log.SetOutput(os.Stdout)
+	} else {
+		log.SetOutput(io.Discard)
+	}
 	ip, err := utils.GetServerIp()
 	if err != nil {
 		log.Fatal(err)
@@ -41,6 +46,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Server started at http://%v:%v", ip, *port)
+	fmt.Printf("Server started at http://%v:%v\n", ip, *port)
 	log.Fatal(http.ListenAndServe(":"+*port, app.Mux))
 }

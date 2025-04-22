@@ -16,7 +16,7 @@ RemoteMediaControl
 
 # Release binaries
 release/
-*.o
+*.syso
 *.rc
 
 # IntelliJ IDEA
