@@ -70,7 +70,8 @@ install_service() {
   cat > /etc/systemd/system/$service_name << EOF
 [Unit]
 Description=Remote Media Control Application
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 ExecStart=$install_dir/$binary_name
